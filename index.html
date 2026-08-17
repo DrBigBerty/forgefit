@@ -461,7 +461,7 @@ body {
   line-height: 1.2;
   color: var(--text);
 }
-.ex-meta { font-size: 11px; color: var(--text3); margin-top: 3px; line-height: 1.4; }
+.ex-meta { font-size: 13px; color: var(--text2); margin-top: 4px; line-height: 1.5; font-weight: 500; }
 .superset-tag {
   display: inline-block;
   font-size: 9px; font-weight: 800;
@@ -586,6 +586,115 @@ body {
 }
 .complete-btn:active { opacity: 0.85; transform: scale(0.99); }
 .complete-btn.done { background: linear-gradient(135deg, #15803d, #16a34a); }
+.complete-btn.missed { background: linear-gradient(135deg, #7f1d1d, #991b1b); }
+
+.btn-row { display: flex; gap: 8px; margin-top: 12px; }
+.btn-row .complete-btn { margin-top: 0; }
+
+.miss-modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 500;
+  align-items: flex-end;
+  justify-content: center;
+}
+.miss-modal-overlay.open { display: flex; }
+.miss-modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r) var(--r) 0 0;
+  padding: 24px 20px 32px;
+  width: 100%;
+  max-width: 480px;
+}
+.miss-modal-title {
+  font-family: Bebas Neue, sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.miss-modal-sub {
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.miss-reason-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.miss-reason-btn {
+  padding: 10px 8px;
+  border-radius: var(--r-sm);
+  border: 2px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text2);
+  font-family: Barlow Condensed, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.3;
+  transition: all 0.15s;
+}
+.miss-reason-btn:active { opacity: 0.8; }
+.miss-reason-btn.genuine { border-color: #92400e; background: rgba(146,64,14,0.15); color: var(--yellow); }
+.miss-reason-btn.negative { border-color: #7f1d1d; background: rgba(127,29,29,0.2); color: var(--red); }
+.miss-reason-btn.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+.miss-custom-input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: Barlow, sans-serif;
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  outline: none;
+  margin-bottom: 12px;
+}
+.miss-custom-input:focus { border-color: var(--accent); }
+.miss-confirm-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: var(--r);
+  background: linear-gradient(135deg, #7f1d1d, #991b1b);
+  color: white;
+  font-family: Bebas Neue, sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+.miss-cancel {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text3);
+  cursor: pointer;
+  margin-top: 10px;
+  padding: 6px;
+  text-decoration: underline;
+}
+.missed-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(127,29,29,0.2);
+  color: var(--red);
+  border: 1px solid rgba(248,113,113,0.3);
+  margin-top: 6px;
+}
 
 /* ---- PROGRESS ---- */
 .progress-card {
@@ -824,7 +933,7 @@ body {
 <div id="setupOverlay">
   <div class="setup-hero">
     <div class="setup-logo">FORGE <span>FIT</span></div>
-    <div class="setup-tagline">8-Week Programme &mdash; Milan Ready</div>
+    <div class="setup-tagline">24-Week Programme &mdash; 28 November Goal</div>
   </div>
   <div class="setup-body">
     <div class="setup-intro">
@@ -873,7 +982,7 @@ body {
 <div class="app-header">
   <div class="header-title">
     <h1>FORGE <span>FIT</span></h1>
-    <div class="header-sub">8-Week Programme</div>
+    <div class="header-sub">24-Week Programme</div>
   </div>
   <button class="sync-btn" id="syncBtn" onclick="manualSync()">
     <div class="sync-dot"></div>
@@ -913,10 +1022,10 @@ body {
       <div class="stat-box"><div class="stat-val" id="pDays">0</div><div class="stat-lbl">Days Done</div></div>
       <div class="stat-box"><div class="stat-val" id="pWeeks">0</div><div class="stat-lbl">Weeks Done</div></div>
       <div class="stat-box"><div class="stat-val" id="pSessions">0</div><div class="stat-lbl">Sessions</div></div>
-      <div class="stat-box"><div class="stat-val" id="pMilan">--</div><div class="stat-lbl">Days to Milan</div></div>
+      <div class="stat-box"><div class="stat-val" id="pMilan">--</div><div class="stat-lbl">Days to Goal</div></div>
     </div>
     <div class="prog-bar-wrap">
-      <div class="prog-bar-labels"><span>Programme Start</span><span>Milan 08/07</span></div>
+      <div class="prog-bar-labels"><span>Programme Start</span><span>28 Nov</span></div>
       <div class="prog-bar-bg"><div class="prog-bar-fill" id="progBar" style="width:0%"></div></div>
       <div class="prog-bar-pct" id="progPct">0%</div>
     </div>
@@ -940,7 +1049,7 @@ body {
 
 <!-- ===== PLAN ===== -->
 <div class="section" id="tab-plan">
-  <div class="info-box"><strong>Duration:</strong> 8-10 weeks &bull; 3 Strength + 2 Cardio + 1-2 Walks per week<br><strong>Goal:</strong> Fit confidently in XXL by Milan, 08 July 2026</div>
+  <div class="info-box"><strong>Duration:</strong> 24 weeks &bull; 3 Strength + 2 Cardio + 1-2 Walks per week<br><strong>Goal:</strong> Fit confidently in XXL by 28 November 2026</div>
 
   <div class="plan-card">
     <div class="plan-title">Weekly Template</div>
@@ -1027,8 +1136,8 @@ body {
 // ============================================================
 // CONFIG
 // ============================================================
-var PROGRAM_START = new Date('2026-06-01');
-var MILAN_DATE    = new Date('2026-07-08');
+var PROGRAM_START = new Date('2026-08-17');
+var MILAN_DATE    = new Date('2026-11-28');
 var JSONBIN_URL   = 'https://api.jsonbin.io/v3/b';
 var DAY_NAMES     = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
@@ -1071,8 +1180,8 @@ var WORKOUTS = {
         label: 'Floor Finisher (Spare Room - before shower)',
         location: 'bedroom',
         exercises: [
-          { id:'sA_pu', name:'Push-Ups', sets:3, reps:'10-15', rest:'45s', yt:'https://www.youtube.com/watch?v=IODxDxX7oi4', weight:false, note:'Chest burnout. Go to failure if needed.' },
-          { id:'sA_wp', name:'Wide Push-Ups', sets:2, reps:'10', rest:'45s', yt:'https://www.youtube.com/watch?v=cx3PrKFLVP8', weight:false, note:'Targets outer pec. Directly reduces moob appearance.' },
+          { id:'sA_cf', name:'Standing Chest Squeeze', sets:3, reps:'15', rest:'45s', yt:'https://www.youtube.com/watch?v=HljpDhZHAY0', weight:false, note:'Press palms together hard at chest height. Hold 2 sec each rep. Shapes pec without floor.' },
+          { id:'sA_iso', name:'Isometric Wall Push (chest)', sets:3, reps:'30 sec hold', rest:'45s', yt:'https://www.youtube.com/watch?v=JOi4pHLzKFo', weight:false, note:'Press hands against wall as hard as possible. Upper chest focus.' },
           { id:'sA_pl', name:'Plank Hold', sets:3, reps:'30-45 sec', rest:'45s', yt:'https://www.youtube.com/watch?v=ASdvN_XEl_c', weight:false }
         ]
       }
@@ -1098,7 +1207,7 @@ var WORKOUTS = {
         location: 'garage',
         exercises: [
           { id:'sB_row', name:'Single-Arm Dumbbell Row', sets:3, reps:'12 each', rest:'90s', yt:'https://www.youtube.com/watch?v=pYcpY20QaE8', weight:true, defaultWeight:12, unit:'kg' },
-          { id:'sB_rdl', name:'KB Romanian Deadlift', sets:3, reps:'10', rest:'90s', yt:'https://www.youtube.com/watch?v=2SHsk9AzdjA', weight:true, defaultWeight:20, unit:'kg KB' }
+          { id:'sB_rdl', name:'Romanian Deadlift (bar)', sets:3, reps:'10', rest:'90s', yt:'https://www.youtube.com/watch?v=JCXUYuzwNrM', weight:true, defaultWeight:30, unit:'kg', note:'Bar stays close to legs throughout. Hinge at hips, soft knee.' }
         ]
       },
       {
@@ -1113,15 +1222,15 @@ var WORKOUTS = {
         label: 'Block 3 - Triceps (Garage)',
         location: 'garage',
         exercises: [
-          { id:'sB_tri', name:'Resistance Band Tricep Pushdown', sets:3, reps:'15', rest:'60s', yt:'https://www.youtube.com/watch?v=2-LAMcpzODU', weight:false }
+          { id:'sB_tri', name:'Overhead Tricep Extension (KB)', sets:3, reps:'12', rest:'60s', yt:'https://www.youtube.com/watch?v=YnnHMdMcT50', weight:true, defaultWeight:12, unit:'kg KB', note:'Hold KB with both hands overhead. Slow down, press up.' }
         ]
       },
       {
         label: 'Floor Finisher (Spare Room - before shower)',
         location: 'bedroom',
         exercises: [
-          { id:'sB_dpu', name:'Diamond Push-Ups', sets:3, reps:'8-12', rest:'45s', yt:'https://www.youtube.com/watch?v=J0DXBSpggZo', weight:false, note:'Best tricep bodyweight exercise. Pairs with band work from garage.' },
-          { id:'sB_sc', name:'Shoulder Tap Plank', sets:2, reps:'20 taps total', rest:'45s', yt:'https://www.youtube.com/watch?v=LEZq7QgPgIQ', weight:false, note:'Core and shoulder stability.' },
+          { id:'sB_dpu', name:'Chair Tricep Dips', sets:3, reps:'10-12', rest:'45s', yt:'https://www.youtube.com/watch?v=0326dy_-CzM', weight:false, note:'Use bedroom chair. Hands on edge, lower until elbows 90 degrees. Easier on elbows than push-ups.' },
+          { id:'sB_sc', name:'Shoulder Tap Plank', sets:2, reps:'20 taps total', rest:'45s', yt:'https://www.youtube.com/watch?v=74oad7sbOhs', weight:false, note:'Core and shoulder stability. Keep hips square.' },
           { id:'sB_bg', name:'Glute Bridge', sets:2, reps:'20', rest:'30s', yt:'https://www.youtube.com/watch?v=wPM8icPu6H8', weight:false }
         ]
       }
@@ -1139,7 +1248,7 @@ var WORKOUTS = {
         label: 'Warm-Up (Garage - 5 min)',
         location: 'garage',
         exercises: [
-          { id:'wC1', name:'Leg Swings + Hip Circles', sets:1, reps:'30 sec each', rest:'--', yt:'https://www.youtube.com/watch?v=8bbE64NuDTU', weight:false }
+          { id:'wC1', name:'Leg Swings + Hip Circles', sets:1, reps:'30 sec each', rest:'--', yt:'https://www.youtube.com/watch?v=GmB0UMnFRuI', weight:false }
         ]
       },
       {
@@ -1147,7 +1256,7 @@ var WORKOUTS = {
         location: 'garage',
         exercises: [
           { id:'sC_gs', name:'KB Goblet Squat', sets:3, reps:'10-12', rest:'90s', yt:'https://www.youtube.com/watch?v=MeIiIdhvXT4', weight:true, defaultWeight:16, unit:'kg KB' },
-          { id:'sC_ksd', name:'KB Sumo Deadlift', sets:3, reps:'10', rest:'90s', yt:'https://www.youtube.com/watch?v=5FBiCp0YHSM', weight:true, defaultWeight:20, unit:'kg KB' }
+          { id:'sC_ksd', name:'KB Sumo Deadlift', sets:3, reps:'10', rest:'90s', yt:'https://www.youtube.com/watch?v=tOkNOEAVZYY', weight:true, defaultWeight:20, unit:'kg KB', note:'Wide stance, toes out. Drive through heels.' }
         ]
       },
       {
@@ -1161,7 +1270,7 @@ var WORKOUTS = {
         label: 'Floor Finisher (Spare Room - before shower)',
         location: 'bedroom',
         exercises: [
-          { id:'sC_rl', name:'Reverse Lunge', sets:3, reps:'10 each leg', rest:'45s', yt:'https://www.youtube.com/watch?v=xrjTGHBHMdg', weight:false },
+          { id:'sC_rl', name:'Reverse Lunge', sets:3, reps:'10 each leg', rest:'45s', yt:'https://www.youtube.com/watch?v=D7KaRcUTQeE', weight:false },
           { id:'sC_lt', name:'Lying Leg Raise', sets:3, reps:'12', rest:'45s', yt:'https://www.youtube.com/watch?v=JB2oyawG9KI', weight:false, note:'Lower abs. Slow on the way down.' },
           { id:'sC_mt', name:'Mountain Climbers', sets:2, reps:'30 sec', rest:'30s', yt:'https://www.youtube.com/watch?v=nmwgirgXLYM', weight:false, note:'Cardio finisher. Keep hips level.' }
         ]
@@ -1227,7 +1336,7 @@ var ls = {
 function loadState(){
   var raw = ls.get('ff_state');
   if(raw){ try{ return JSON.parse(raw); }catch(e){} }
-  return { completedDays:{}, setsDone:{}, weights:{}, weightLog:[], notes:{}, strengthBest:{} };
+  return { completedDays:{}, setsDone:{}, weights:{}, weightLog:[], notes:{}, strengthBest:{}, missedDays:{} };
 }
 
 var state = loadState();
@@ -1428,7 +1537,7 @@ function settingsReset(){
   ls.remove('ff_state');
   ls.remove('ff_apikey');
   ls.remove('ff_binid');
-  state = { completedDays:{}, setsDone:{}, weights:{}, weightLog:[], notes:{}, strengthBest:{} };
+  state = { completedDays:{}, setsDone:{}, weights:{}, weightLog:[], notes:{}, strengthBest:{}, missedDays:{} };
   document.getElementById('settingsStatus').className='settings-status status-ok';
   document.getElementById('settingsStatus').textContent='Data reset. Reload the page to re-run setup.';
   showToast('Data cleared');
@@ -1493,7 +1602,7 @@ function renderToday(){
     html += "<div style='font-size:13px;color:var(--text2);margin-top:16px;line-height:1.6;'>Use this time to get the tracker set up on your phone,<br>prep your garage, and get a good nights sleep Sunday.</div>";
     html += '<div style="margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;text-align:left;">';
     html += '<div style="font-family:Barlow Condensed,sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Monday kicks off with Strength A</div>';
-    html += '<div style="font-size:12px;color:var(--text2);line-height:1.8;">Bench Press - Incline Press - Overhead Press &amp; Lateral Raise superset - Floor finisher in spare room</div>';
+    html += '<div style="font-size:12px;color:var(--text2);line-height:1.8;">Bench Press - Incline Press - Overhead Press and Lateral Raise superset - Floor finisher in spare room</div>';
     html += '</div></div>';
     document.getElementById('todayContent').innerHTML = html;
     return;
@@ -1563,9 +1672,22 @@ function buildDayCard(w, wKey, week, dayIdx, expanded, isToday){
 
   if(w.type !== 'rest'){
     html += '<textarea class="notes-area" placeholder="Session notes..." onchange="saveNote(\''+dayKey+'\',this.value)">'+(state.notes[dayKey]||'')+'</textarea>';
-    html += '<button class="complete-btn'+(isDone?' done':'')+'" onclick="markDone(\''+dayKey+'\')">';
-    html += isDone ? '&#10003; SESSION COMPLETE' : 'MARK AS COMPLETE';
-    html += '</button>';
+    var missedReason = state.missedDays && state.missedDays[dayKey];
+    html += '<div class="btn-row">';
+    if(!missedReason){
+      html += '<button class="complete-btn'+(isDone?' done':'')+'\" onclick="markDone(\''+dayKey+'\')">';
+      html += isDone ? '&#10003; COMPLETE' : 'MARK COMPLETE';
+      html += '</button>';
+    }
+    if(!isDone){
+      html += '<button class="complete-btn missed" style="flex:0 0 auto;padding-left:14px;padding-right:14px;" onclick="openMissModal(\''+dayKey+'\')">';
+      html += missedReason ? '&#10007; MISSED' : 'DID NOT<br>COMPLETE';
+      html += '</button>';
+    }
+    html += '</div>';
+    if(missedReason){
+      html += '<div class="missed-tag">&#10007; '+missedReason+'</div>';
+    }
   } else {
     html += '<div style="font-size:13px;color:var(--text3);padding:8px 0;">Rest and recover. Light stretching or a gentle walk is fine.</div>';
   }
@@ -1688,14 +1810,16 @@ function markDone(dayKey){
 // ============================================================
 function renderProgress(){
   var elapsed = Math.max(Math.floor((todayMidnight()-PROGRAM_START)/(24*60*60*1000)), 0);
-  var totalDays = 70;
+  var totalDays = 168;
   var pct = programmeStarted() ? Math.min(Math.round((elapsed/totalDays)*100),100) : 0;
   var sessions = Object.keys(state.completedDays).filter(function(k){ return state.completedDays[k]; }).length;
+  var missed = state.missedDays ? Object.keys(state.missedDays).length : 0;
   var weeksDone = Math.max(0, currentWeekNum()-1);
 
   document.getElementById('pDays').textContent    = Math.max(elapsed,0);
   document.getElementById('pWeeks').textContent   = weeksDone;
   document.getElementById('pSessions').textContent = sessions;
+  if(document.getElementById('pMissed')) document.getElementById('pMissed').textContent = missed;
   document.getElementById('pMilan').textContent   = daysToMilan();
   document.getElementById('progBar').style.width  = pct+'%';
   document.getElementById('progPct').textContent  = pct+'%';
@@ -1726,7 +1850,7 @@ function renderProgress(){
     {id:'sA_op',  name:'Overhead Press'},
     {id:'sA_lr',  name:'Lateral Raise'},
     {id:'sB_row', name:'DB Row'},
-    {id:'sB_rdl', name:'KB RDL'},
+    {id:'sB_rdl', name:'RDL (bar)'},
     {id:'sB_cur', name:'Bicep Curl'},
     {id:'sB_hcur',name:'Hammer Curl'},
     {id:'sC_gs',  name:'Goblet Squat'},
@@ -1788,6 +1912,61 @@ function renderAll(){
   }
 }
 
+
+// ============================================================
+// MISSED SESSION
+// ============================================================
+var currentMissDay = null;
+var selectedReason = null;
+
+function openMissModal(dayKey){
+  currentMissDay = dayKey;
+  selectedReason = null;
+  document.getElementById('missCustomInput').style.display = 'none';
+  document.getElementById('missCustomInput').value = '';
+  document.querySelectorAll('.miss-reason-btn').forEach(function(b){ b.classList.remove('selected'); });
+  document.getElementById('missModal').classList.add('open');
+}
+
+function closeMissModal(e){
+  if(e && e.target !== document.getElementById('missModal')) return;
+  document.getElementById('missModal').classList.remove('open');
+  currentMissDay = null;
+  selectedReason = null;
+}
+
+function selectReason(reason){
+  selectedReason = reason;
+  document.querySelectorAll('.miss-reason-btn').forEach(function(b){ b.classList.remove('selected'); });
+  event.target.classList.add('selected');
+  var ci = document.getElementById('missCustomInput');
+  if(reason === 'custom'){
+    ci.style.display = 'block';
+    ci.focus();
+    selectedReason = null;
+  } else {
+    ci.style.display = 'none';
+  }
+}
+
+function confirmMissed(){
+  var reason = selectedReason;
+  if(!reason){
+    var custom = document.getElementById('missCustomInput').value.trim();
+    if(custom) reason = custom;
+  }
+  if(!reason){ showToast('Please select or type a reason'); return; }
+  if(!state.missedDays) state.missedDays = {};
+  state.missedDays[currentMissDay] = reason;
+  state.completedDays[currentMissDay] = false;
+  document.getElementById('missModal').classList.remove('open');
+  scheduleSave();
+  showToast('Logged as missed');
+  renderToday();
+  renderWeek();
+  renderProgress();
+}
+
 // ============================================================
 // INIT
 // ============================================================
@@ -1804,5 +1983,26 @@ if(getApiKey() && getApiKey() !== '__local__' && getBinId()){
 
 refreshSettingsInputs();
 </script>
+
+<!-- MISSED SESSION MODAL -->
+<div class="miss-modal-overlay" id="missModal" onclick="closeMissModal(event)">
+  <div class="miss-modal">
+    <div class="miss-modal-title">Session Not Completed</div>
+    <div class="miss-modal-sub">Be honest - it helps you spot patterns and stay accountable. Select a reason:</div>
+    <div class="miss-reason-grid">
+      <button class="miss-reason-btn genuine" onclick="selectReason('Too busy - work')">Too busy<br>Work</button>
+      <button class="miss-reason-btn genuine" onclick="selectReason('Too busy - family/social')">Too busy<br>Family / Social</button>
+      <button class="miss-reason-btn genuine" onclick="selectReason('Unwell or injured')">Unwell /<br>Injured</button>
+      <button class="miss-reason-btn genuine" onclick="selectReason('Did other exercise instead')">Other exercise<br>instead</button>
+      <button class="miss-reason-btn negative" onclick="selectReason('Was lazy - no good reason')">Lazy - no<br>good reason</button>
+      <button class="miss-reason-btn negative" onclick="selectReason('Tired but could have pushed through')">Tired - could<br>have pushed</button>
+      <button class="miss-reason-btn negative" onclick="selectReason('Poor excuse - lost motivation')">Lost<br>motivation</button>
+      <button class="miss-reason-btn genuine" onclick="selectReason('custom')">Other<br>(type below)</button>
+    </div>
+    <input class="miss-custom-input" type="text" id="missCustomInput" placeholder="Type your reason here..." style="display:none;">
+    <button class="miss-confirm-btn" onclick="confirmMissed()">LOG AS MISSED</button>
+    <div class="miss-cancel" onclick="closeMissModal()">Cancel</div>
+  </div>
+</div>
 </body>
 </html>
